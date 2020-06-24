@@ -3,7 +3,7 @@ use nalgebra::Vector3;
 // crate imports
 use crate::data::Color;
 use crate::data::{rand_float, rand_float01, vlen, vrandom_range};
-use crate::engine::{Hittable, HittableList, Sphere, XYRect};
+use crate::engine::{Hittable, HittableList, Sphere, XYRect, XZRect, YZRect};
 use crate::materials::{Dielectric, DiffuseLight, Lambertian, Metal};
 use crate::textures::{CheckerTexture, ImageTexture, NoiseTexture, Texture};
 
@@ -90,10 +90,29 @@ pub fn simple_light() -> HittableList {
 
     let pertext = NoiseTexture::new(2.0).share();
     let lamb = Lambertian::from_texture(pertext.clone()).share();
-    let diff_light = DiffuseLight::from_color(Color::new(0.5, 1.0, 100.0)).share();
+    let diff_light = DiffuseLight::from_color(Color::new(1.0, 1.0, 1.0)).share();
+    let sun = DiffuseLight::from_color(Color::new(0.5, 0.5, 0.5)).share();
     objects.add(Sphere::new(Vector3::new(0.0, -1000.0, 0.0), 1000.0, lamb.clone()).share());
-    objects.add(Sphere::new(Vector3::new(0.0, 2.0, 0.0), 2.0, diff_light.clone()).share());
-
+    objects.add(Sphere::new(Vector3::new(0.0, 2.0, 0.0), 2.0, lamb.clone()).share());
+    objects.add(Sphere::new(Vector3::new(0.0, 500.0, 0.0), 400.0, sun.clone()).share());
     objects.add(XYRect::new(3.0, 5.0, 1.0, 3.0, -2.0, diff_light.clone()).share());
+    return objects;
+}
+
+pub fn cornell_box() -> HittableList {
+    let mut objects = HittableList::new();
+
+    let red = Lambertian::from_color(Color::new(0.65, 0.05, 0.05)).share();
+    let white = Lambertian::from_color(Color::new(0.73, 0.73, 0.73)).share();
+    let green = Lambertian::from_color(Color::new(0.12, 0.45, 0.12)).share();
+    let light = DiffuseLight::from_color(Color::new(5.0, 5.0, 5.0)).share();
+
+    objects.add(YZRect::new(0.0, 555.0, 0.0, 555.0, 555.0, green.clone()).share());
+    objects.add(YZRect::new(0.0, 555.0, 0.0, 555.0, 0.0, red.clone()).share());
+    objects.add(XZRect::new(113.0, 443.0, 127.0, 432.0, 554.0, light.clone()).share());
+    objects.add(XZRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white.clone()).share());
+    objects.add(XZRect::new(0.0, 555.0, 0.0, 555.0, 0.0, white.clone()).share());
+    objects.add(XYRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white.clone()).share());
+
     return objects;
 }
