@@ -51,22 +51,22 @@ impl Vector{
 
     pub fn random() -> Vector {
         Vector::new(
-            thread_rng().sample(Open01),
-            thread_rng().sample(Open01),
-            thread_rng().sample(Open01),
+            rand_float01(),
+            rand_float01(),
+            rand_float01(),
         )
     }
 
     pub fn random_range(min: f64, max: f64) -> Vector {
         Vector::new(
-            thread_rng().sample(Uniform::from(min..max)),
-            thread_rng().sample(Uniform::from(min..max)),
-            thread_rng().sample(Uniform::from(min..max)),
+            rand_float(min, max),
+            rand_float(min, max),
+            rand_float(min, max),
         )
     }
     pub fn random_in_unit_sphere() -> Vector {
-        let a:f64 = thread_rng().sample(Uniform::from(0.0..2.0*PI));
-        let z: f64 = thread_rng().sample(Uniform::from(-1.0..1.0));
+        let a:f64 = rand_float(0.0, 2.0*PI);
+        let z: f64 = rand_float(-1.0,1.0);
         let r: f64 = (1.0-z*z).sqrt();
         return Vector::new(r*a.cos(), r*a.sin(), z)
     }
@@ -80,6 +80,17 @@ impl Vector{
         }
     }
 
+    pub fn random_in_unit_disk() -> Vector {
+        loop {
+            let p = Vector::new(
+                rand_float(-1.0, 1.0),
+                rand_float(-1.0, 1.0), 
+                0.0);
+            if p.len_squared() > 1.0 { continue }
+            return p
+        }
+    }
+
     pub fn reflect(v: &Vector, n: &Vector) -> Vector {
         v - 2.0 * Vector::dot(v,n) * n
     }
@@ -90,6 +101,14 @@ impl Vector{
         let r_out_perp: Vector = -(1.0 - r_out_parallel.len_squared()).sqrt() * n;
         return r_out_parallel + r_out_perp;
     }
+}
+
+fn rand_float(from: f64, to: f64) -> f64 {
+    thread_rng().sample(Uniform::from(from..to))
+}
+
+fn rand_float01() -> f64 {
+    thread_rng().sample(Open01)
 }
 
 fn add_vectors(lhs: &Vector, rhs: &Vector) -> Vector {
