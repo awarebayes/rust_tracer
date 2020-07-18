@@ -2,17 +2,16 @@ use crate::data::export::Vector;
 use crate::engine::export::{HitRecord, Ray};
 use crate::engine::hittable::Hittable;
 use crate::materials::export::Material;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 pub struct Sphere {
     center: Vector,
     radius: f64,
-    mat_ptr: Rc<RefCell<dyn Material>>,
+    mat_ptr: Arc<Mutex<dyn Material>>,
 }
 
 impl Sphere {
-    pub fn new(center: Vector, radius: f64, mat_ptr: Rc<RefCell<dyn Material>>) -> Sphere {
+    pub fn new(center: Vector, radius: f64, mat_ptr: Arc<Mutex<dyn Material>>) -> Sphere {
         Sphere {
             center,
             radius,
@@ -20,8 +19,8 @@ impl Sphere {
         }
     }
 
-    pub fn share(self) -> Rc<RefCell<Sphere>> {
-        Rc::new(RefCell::new(self))
+    pub fn share(self) -> Arc<Mutex<Sphere>> {
+        Arc::new(Mutex::new(self))
     }
 }
 
@@ -41,7 +40,7 @@ impl Hittable for Sphere {
                 record.p = r.at(record.t);
                 let outward_normal = (record.p - self.center) / self.radius;
                 record.set_face_normal(r, &outward_normal);
-                record.mat_ptr = Rc::clone(&self.mat_ptr);
+                record.mat_ptr = Arc::clone(&self.mat_ptr);
                 return true;
             }
             let temp = (-b_2 + root) / a;
@@ -50,7 +49,7 @@ impl Hittable for Sphere {
                 record.p = r.at(record.t);
                 let outward_normal = (record.p - self.center) / self.radius;
                 record.set_face_normal(r, &outward_normal);
-                record.mat_ptr = Rc::clone(&self.mat_ptr);
+                record.mat_ptr = Arc::clone(&self.mat_ptr);
                 return true;
             }
         }

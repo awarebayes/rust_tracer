@@ -1,8 +1,8 @@
 use crate::data::export::{Color, Vector};
 use crate::engine::export::{HitRecord, Ray};
 use crate::materials::export::Material;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+
 
 pub struct Lambertian {
     albedo: Color,
@@ -12,8 +12,8 @@ impl Lambertian {
     pub fn new(albedo: Color) -> Lambertian {
         Lambertian { albedo }
     }
-    pub fn share(self) -> Rc<RefCell<dyn Material>> {
-        Rc::new(RefCell::new(self))
+    pub fn share(self) -> Arc<Mutex<dyn Material>> {
+        Arc::new(Mutex::new(self))
     }
 }
 

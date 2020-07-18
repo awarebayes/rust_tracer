@@ -1,11 +1,10 @@
 use crate::engine::export::{HitRecord, Ray};
 use crate::engine::hittable::Hittable;
 
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 pub struct HittableList {
-    objects: Vec<Rc<RefCell<dyn Hittable>>>,
+    objects: Vec<Arc<Mutex<dyn Hittable>>>,
 }
 
 impl HittableList {
@@ -21,7 +20,7 @@ impl HittableList {
     }
      */
 
-    pub fn add(&mut self, object: Rc<RefCell<dyn Hittable>>) {
+    pub fn add(&mut self, object: Arc<Mutex<dyn Hittable>>) {
         self.objects.push(object);
     }
 
@@ -31,7 +30,7 @@ impl HittableList {
         let mut closest_so_far = t_max;
 
         for object in self.objects.iter() {
-            let hit = object.borrow().hit(r, t_min, t_max, &mut temp);
+            let hit = object.lock().unwrap().hit(r, t_min, t_max, &mut temp);
             if hit && temp.t < closest_so_far {
                 hit_anything = true;
                 closest_so_far = temp.t;

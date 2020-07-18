@@ -3,8 +3,8 @@ use crate::engine::export::{HitRecord, Ray};
 use crate::materials::export::Material;
 use rand::distributions::{Open01, Uniform};
 use rand::{thread_rng, Rng};
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+
 
 pub struct Dielectric {
     ref_idx: f64,
@@ -14,8 +14,8 @@ impl Dielectric {
     pub fn new(ref_idx: f64) -> Dielectric {
         Dielectric { ref_idx }
     }
-    pub fn share(self) -> Rc<RefCell<dyn Material>> {
-        Rc::new(RefCell::new(self))
+    pub fn share(self) -> Arc<Mutex<dyn Material>> {
+        Arc::new(Mutex::new(self))
     }
 }
 
