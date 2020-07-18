@@ -1,24 +1,29 @@
-use std::ops;
-use rand::{thread_rng, Rng};
 use rand::distributions::{Open01, Uniform};
+use rand::{thread_rng, Rng};
 use std::f64::consts::PI;
+use std::ops;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vector {
-    x:f64,
-    y:f64,
-    z:f64,
+    x: f64,
+    y: f64,
+    z: f64,
 }
 
-impl Vector{
-    pub fn new(x:f64, y:f64, z:f64) -> Vector {
-        Vector { x,y,z }
+impl Vector {
+    pub fn new(x: f64, y: f64, z: f64) -> Vector {
+        Vector { x, y, z }
     }
 
-    pub fn x(&self) -> f64 { self.x }
-    pub fn y(&self) -> f64 { self.y }
-    pub fn z(&self) -> f64 { self.z }
-
+    pub fn x(&self) -> f64 {
+        self.x
+    }
+    pub fn y(&self) -> f64 {
+        self.y
+    }
+    pub fn z(&self) -> f64 {
+        self.z
+    }
 
     pub fn len(&self) -> f64 {
         self.len_squared().sqrt()
@@ -50,11 +55,7 @@ impl Vector{
     }
 
     pub fn random() -> Vector {
-        Vector::new(
-            rand_float01(),
-            rand_float01(),
-            rand_float01(),
-        )
+        Vector::new(rand_float01(), rand_float01(), rand_float01())
     }
 
     pub fn random_range(min: f64, max: f64) -> Vector {
@@ -65,10 +66,10 @@ impl Vector{
         )
     }
     pub fn random_in_unit_sphere() -> Vector {
-        let a:f64 = rand_float(0.0, 2.0*PI);
-        let z: f64 = rand_float(-1.0,1.0);
-        let r: f64 = (1.0-z*z).sqrt();
-        return Vector::new(r*a.cos(), r*a.sin(), z)
+        let a: f64 = rand_float(0.0, 2.0 * PI);
+        let z: f64 = rand_float(-1.0, 1.0);
+        let r: f64 = (1.0 - z * z).sqrt();
+        return Vector::new(r * a.cos(), r * a.sin(), z);
     }
 
     pub fn random_in_hemisphere(normal: &Vector) -> Vector {
@@ -76,38 +77,37 @@ impl Vector{
         if Vector::dot(&in_unit_sphere, normal) > 0.0 {
             return in_unit_sphere;
         } else {
-            return -1.0 * in_unit_sphere
+            return -1.0 * in_unit_sphere;
         }
     }
 
     pub fn random_in_unit_disk() -> Vector {
         loop {
-            let p = Vector::new(
-                rand_float(-1.0, 1.0),
-                rand_float(-1.0, 1.0), 
-                0.0);
-            if p.len_squared() > 1.0 { continue }
-            return p
+            let p = Vector::new(rand_float(-1.0, 1.0), rand_float(-1.0, 1.0), 0.0);
+            if p.len_squared() > 1.0 {
+                continue;
+            }
+            return p;
         }
     }
 
     pub fn reflect(v: &Vector, n: &Vector) -> Vector {
-        v - 2.0 * Vector::dot(v,n) * n
+        v - 2.0 * Vector::dot(v, n) * n
     }
 
     pub fn refract(uv: &Vector, n: &Vector, etai_over_etat: f64) -> Vector {
-        let cos_theta = Vector::dot(&(-1.0*uv), n);
+        let cos_theta = Vector::dot(&(-1.0 * uv), n);
         let r_out_parallel: Vector = etai_over_etat * (uv + cos_theta * n);
         let r_out_perp: Vector = -(1.0 - r_out_parallel.len_squared()).sqrt() * n;
         return r_out_parallel + r_out_perp;
     }
 }
 
-fn rand_float(from: f64, to: f64) -> f64 {
+pub fn rand_float(from: f64, to: f64) -> f64 {
     thread_rng().sample(Uniform::from(from..to))
 }
 
-fn rand_float01() -> f64 {
+pub fn rand_float01() -> f64 {
     thread_rng().sample(Open01)
 }
 
@@ -317,4 +317,3 @@ impl ops::Div<f64> for &Vector {
         div_vector_and_scalar(&self, rhs)
     }
 }
-

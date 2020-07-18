@@ -1,16 +1,16 @@
+use crate::engine::export::{HitRecord, Ray};
 use crate::engine::hittable::Hittable;
-use crate::engine::export::{ Ray, HitRecord };
 
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct HittableList {
     objects: Vec<Rc<RefCell<dyn Hittable>>>,
 }
 
 impl HittableList {
-    pub fn new() -> HittableList{
-        HittableList{
+    pub fn new() -> HittableList {
+        HittableList {
             objects: Vec::new(),
         }
     }
@@ -25,7 +25,7 @@ impl HittableList {
         self.objects.push(object);
     }
 
-    pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool{
+    pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool {
         let mut temp = HitRecord::new();
         let mut hit_anything = false;
         let mut closest_so_far = t_max;

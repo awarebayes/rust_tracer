@@ -1,8 +1,8 @@
-use crate::data::export::{Vector, Color};
+use crate::data::export::{Color, Vector};
 use crate::engine::export::Ray;
-use crate::materials::export::{ Lambertian, Material };
-use std::rc::Rc;
+use crate::materials::export::{Lambertian, Material};
 use std::cell::RefCell;
+use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct HitRecord {
@@ -10,7 +10,7 @@ pub struct HitRecord {
     pub(crate) normal: Vector,
     pub(crate) t: f64,
     pub(crate) front_face: bool,
-    pub(crate) mat_ptr: Rc<RefCell<dyn Material>>
+    pub(crate) mat_ptr: Rc<RefCell<dyn Material>>,
 }
 
 impl HitRecord {
@@ -23,18 +23,15 @@ impl HitRecord {
     }
     pub fn new() -> HitRecord {
         HitRecord {
-            p: Vector::new(0.0,0.0,0.0),
+            p: Vector::new(0.0, 0.0, 0.0),
             normal: Vector::new(0.0, 0.0, 0.0),
             t: 0.0,
             front_face: false,
-            mat_ptr: Rc::new(RefCell::new(Lambertian::new(Color::new(0.0, 0.0, 0.0))))
+            mat_ptr: Rc::new(RefCell::new(Lambertian::new(Color::new(0.0, 0.0, 0.0)))),
         }
     }
 }
 
-
-
 pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool;
 }
-

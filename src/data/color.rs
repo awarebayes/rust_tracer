@@ -1,8 +1,8 @@
+use crate::data::export::Vector;
 use image::Rgb;
 use std::cmp::min;
 use std::iter::Sum;
 use std::ops;
-use crate::data::export::Vector;
 
 const RGB_MULT: f64 = 255.99;
 const RGB_MAX: u64 = 255;
@@ -23,8 +23,12 @@ impl Color {
         Color::new(v.x(), v.y(), v.z())
     }
 
-    pub fn from_rgb(r: u32, g: u32, b:u32) ->Color {
-        Color { r: (r as f64)/256.0, g: (g as f64)/256.0, b: (b as f64)/256.0 }
+    pub fn from_rgb(r: u32, g: u32, b: u32) -> Color {
+        Color {
+            r: (r as f64) / 256.0,
+            g: (g as f64) / 256.0,
+            b: (b as f64) / 256.0,
+        }
     }
 
     pub fn r(&self) -> f64 {
@@ -95,11 +99,21 @@ impl Color {
     }
 
     pub fn check_not_nan(&self) -> bool {
-        if self.r().is_nan() { return true; }
-        if self.g().is_nan() { return true; }
-        if self.b().is_nan() { return true; }
+        if self.r().is_nan() {
+            return true;
+        }
+        if self.g().is_nan() {
+            return true;
+        }
+        if self.b().is_nan() {
+            return true;
+        }
 
-        return false
+        return false;
+    }
+
+    pub fn random() -> Color {
+        Color::from_vector(&Vector::random())
     }
 }
 

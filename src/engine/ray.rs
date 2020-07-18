@@ -8,15 +8,18 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Vector, direction: Vector) -> Ray {
-        Ray {orig: origin, dir: direction}
+        Ray {
+            orig: origin,
+            dir: direction,
+        }
     }
     pub fn origin(&self) -> Vector {
         self.orig
     }
     pub fn direction(&self) -> Vector {
-       self.dir
+        self.dir
     }
     pub fn at(&self, t: f64) -> Vector {
-        self.orig + t*self.dir
+        self.orig + t * self.dir
     }
 }
