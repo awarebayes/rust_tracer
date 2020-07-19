@@ -40,3 +40,6 @@ impl HittableList {
         return hit_anything;
     }
 }
+
+// unsafe impl Sync for HittableList {}
+// unsafe impl Send for HittableList {}

@@ -8,8 +8,8 @@ pub struct Camera {
     vertical: Vector,
     lens_radius: f64,
     u: Vector,
-    v: Vector,
-    w: Vector,
+    // v: Vector,
+    // w: Vector,
 }
 
 impl Camera {
@@ -43,8 +43,8 @@ impl Camera {
             vertical,
             lens_radius,
             u,
-            v,
-            w,
+            // v,
+            // w,
         }
     }
 
@@ -58,3 +58,5 @@ impl Camera {
         )
     }
 }
+
+// unsafe impl Sync for Camera {}

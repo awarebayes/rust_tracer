@@ -1,7 +1,7 @@
 use crate::data::export::{Color, Vector};
 use crate::engine::export::{HitRecord, Ray};
 use crate::materials::export::Material;
-use rand::distributions::{Open01, Uniform};
+use rand::distributions::Open01;
 use rand::{thread_rng, Rng};
 use std::sync::{Arc, Mutex};
 

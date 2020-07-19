@@ -55,4 +55,8 @@ impl Hittable for Sphere {
         }
         return false;
     }
+    
 }
+
+unsafe impl Send for Sphere {}
+unsafe impl Sync for Sphere {}
