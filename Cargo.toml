@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 indicatif = "*"
-image = "*"
 rand = "*"
-iced = "0.1"
+piston = "*"
+piston_window = "*"
+image = "*"

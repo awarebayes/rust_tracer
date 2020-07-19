@@ -6,16 +6,18 @@ use indicatif::{ProgressBar, ProgressStyle};
 use crate::data::export::{Color, Vector};
 use crate::data::vector::{rand_float, rand_float01};
 use crate::engine::export::{Camera, HitRecord, HittableList, Ray, Sphere};
+use crate::gui::render_window;
 use crate::materials::export::{Dielectric, Lambertian, Metal};
 
 // std imports
 use std::f64::INFINITY;
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
 struct SimplePixel {
-    pub color: image::Rgb<u8>,
+    pub color: image::Rgba<u8>,
     pub x: u64,
     pub y: u64,
 }
@@ -27,6 +29,7 @@ pub struct Scene {
     pub max_depth: i32,
     pub image_width: f64,
     pub image_height: f64,
+    pub completed: Arc<AtomicBool>,
 }
 
 fn ray_color(r: &Ray, world: Arc<HittableList>, depth: i32) -> Color {
@@ -98,7 +101,7 @@ pub fn random_world() -> HittableList {
     return world;
 }
 
-fn pixel_processor(x: f64, y: f64, scene: Arc<Scene>) -> image::Rgb<u8> {
+fn pixel_processor(x: f64, y: f64, scene: Arc<Scene>) -> image::Rgba<u8> {
     let mut pixel_color = Color::new(0.0, 0.0, 0.0);
     for _ in 0..scene.samples_per_pixel {
         let u = (x + rand_float01()) / (scene.image_width - 1.0);
@@ -110,7 +113,7 @@ fn pixel_processor(x: f64, y: f64, scene: Arc<Scene>) -> image::Rgb<u8> {
     }
     pixel_color
         .normalize_samples(scene.samples_per_pixel)
-        .to_rgb()
+        .to_rgba()
 }
 
 #[derive(Clone, Copy)]
@@ -168,7 +171,10 @@ fn producer(
         for x in 0..(range.to_x - range.from_x) {
             for y in 0..(range.to_y - range.from_y) {
                 if !success_table[(x) as usize][(y) as usize] {
-                    failed.push(Pair { x: range.from_x + x, y: range.from_y + y });
+                    failed.push(Pair {
+                        x: range.from_x + x,
+                        y: range.from_y + y,
+                    });
                 }
             }
         }
@@ -193,7 +199,7 @@ fn producer(
 
 fn consumer(
     rx: mpsc::Receiver<SimplePixel>,
-    buffer: Arc<Mutex<image::ImageBuffer<image::Rgb<u8>, Vec<u8>>>>,
+    buffer: Arc<Mutex<image::ImageBuffer<image::Rgba<u8>, Vec<u8>>>>,
     progress: Arc<ProgressBar>,
     success_table: Arc<Mutex<Vec<Vec<bool>>>>,
 ) -> thread::JoinHandle<()> {
@@ -232,7 +238,7 @@ fn split_even(from: u64, to: u64, n: u64) -> Vec<(u64, u64)> {
 }
 
 pub fn render(scene: Arc<Scene>, n_workers: u64, path: String) {
-    let imgbuf: Arc<Mutex<image::ImageBuffer<image::Rgb<u8>, Vec<u8>>>> = Arc::new(Mutex::new(
+    let imgbuf: Arc<Mutex<image::ImageBuffer<image::Rgba<u8>, Vec<u8>>>> = Arc::new(Mutex::new(
         image::ImageBuffer::new(scene.image_width as u32, scene.image_height as u32),
     ));
 
@@ -250,7 +256,10 @@ pub fn render(scene: Arc<Scene>, n_workers: u64, path: String) {
 
     let (tx, rx) = mpsc::channel();
     let shared_tx = Arc::new(Mutex::new(tx));
-    let split = split_even(0, scene.image_width as u64-1, n_workers);
+    let split = split_even(0, scene.image_width as u64 - 1, n_workers);
+
+    let render_handle = render_window(imgbuf.clone(), scene.clone());
+
     for (from_x, to_x) in split.iter() {
         let range = ProducerRange {
             from_x: *from_x,
@@ -293,4 +302,7 @@ pub fn render(scene: Arc<Scene>, n_workers: u64, path: String) {
 
     println!("saving...");
     imgbuf.lock().unwrap().save(path).unwrap();
+
+    scene.completed.store(true, Relaxed);
+    render_handle.join().unwrap();
 }

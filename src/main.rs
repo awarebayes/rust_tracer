@@ -9,6 +9,7 @@ extern crate image;
 // crate imports
 use crate::data::export::Vector;
 use crate::engine::export::{random_world, render, Camera, Scene};
+use std::sync::atomic::AtomicBool;
 
 // std imports
 use std::sync::Arc;
@@ -17,7 +18,7 @@ fn main() {
     let image_width = 720.0;
     let aspect_ratio = 16.0 / 9.0;
     let image_height = image_width / aspect_ratio;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 1;
     let max_depth = 50;
     let look_from = Vector::new(13.0, 2.0, 3.0);
     let look_at = Vector::new(0.0, 0.0, 0.0);
@@ -30,6 +31,8 @@ fn main() {
     let world = random_world();
     let world = Arc::new(world);
 
+    let completed = Arc::new(AtomicBool::new(false));
+
     let scene = Scene {
         cam,
         world,
@@ -37,7 +40,8 @@ fn main() {
         max_depth,
         image_width,
         image_height,
+        completed,
     };
     let scene = Arc::new(scene);
-    // render(scene, 16, "test.png".to_string())
+    render(scene, 12, "test.png".to_string())
 }

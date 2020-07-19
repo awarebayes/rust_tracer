@@ -1,5 +1,5 @@
 use crate::data::export::Vector;
-use image::Rgb;
+use image::Rgba;
 use std::cmp::min;
 use std::iter::Sum;
 use std::ops;
@@ -64,7 +64,7 @@ impl Color {
         lhs.r * rhs.r + lhs.g * rhs.g + lhs.b * rhs.b
     }
 
-    pub fn to_rgb(&self) -> Rgb<u8> {
+    pub fn to_rgba(&self) -> Rgba<u8> {
         assert!(0.0 <= self.r, "Found negative r {}", self.r);
         assert!(0.0 <= self.g, "Found negative g {}", self.g);
         assert!(0.0 <= self.b, "Found negative b {}", self.b);
@@ -78,7 +78,7 @@ impl Color {
         let g = min(g, RGB_MAX) as u8;
         let b = min(b, RGB_MAX) as u8;
 
-        Rgb([r, g, b])
+        Rgba([r, g, b, 255])
     }
 
     pub fn gamma_2(self) -> Color {
@@ -117,8 +117,8 @@ impl Color {
     }
 }
 
-impl From<&Rgb<u8>> for Color {
-    fn from(rgb: &Rgb<u8>) -> Self {
+impl From<&Rgba<u8>> for Color {
+    fn from(rgb: &Rgba<u8>) -> Self {
         Color {
             r: f64::from(rgb[0]) / RGB_MULT,
             g: f64::from(rgb[1]) / RGB_MULT,
