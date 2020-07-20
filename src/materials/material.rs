@@ -1,5 +1,5 @@
-use crate::data::export::Color;
-use crate::engine::export::{HitRecord, Ray};
+use crate::data::Color;
+use crate::engine::{HitRecord, Ray};
 
 pub trait Material {
     fn scatter(

@@ -1,4 +1,4 @@
-use crate::data::export::Vector;
+use crate::data::Vector;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Ray {

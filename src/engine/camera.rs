@@ -1,5 +1,5 @@
-use crate::data::export::Vector;
-use crate::engine::export::Ray;
+use crate::data::Vector;
+use crate::engine::Ray;
 
 pub struct Camera {
     origin: Vector,

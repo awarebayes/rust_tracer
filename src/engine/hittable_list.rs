@@ -1,4 +1,4 @@
-use crate::engine::export::{HitRecord, Ray};
+use crate::engine::{HitRecord, Ray};
 use crate::engine::hittable::Hittable;
 
 use std::sync::{Arc, Mutex};

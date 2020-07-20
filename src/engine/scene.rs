@@ -3,11 +3,11 @@ extern crate image;
 use indicatif::{ProgressBar, ProgressStyle};
 
 // crate imports
-use crate::data::export::{Color, Vector};
+use crate::data::{Color, Vector};
 use crate::data::vector::{rand_float, rand_float01};
-use crate::engine::export::{Camera, HitRecord, HittableList, Ray, Sphere};
+use crate::engine::{Camera, HitRecord, HittableList, Ray, Sphere};
 use crate::gui::render_window;
-use crate::materials::export::{Dielectric, Lambertian, Metal};
+use crate::materials::{Dielectric, Lambertian, Metal};
 
 // std imports
 use std::f64::INFINITY;

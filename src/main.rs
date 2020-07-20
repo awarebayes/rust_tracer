@@ -7,8 +7,8 @@ mod materials;
 extern crate image;
 
 // crate imports
-use crate::data::export::Vector;
-use crate::engine::export::{random_world, render, Camera, Scene};
+use crate::data::Vector;
+use crate::engine::{random_world, render, Camera, Scene};
 use std::sync::atomic::AtomicBool;
 
 // std imports

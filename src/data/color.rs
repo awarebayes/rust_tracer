@@ -1,4 +1,4 @@
-use crate::data::export::Vector;
+use crate::data::Vector;
 use image::Rgba;
 use std::cmp::min;
 use std::iter::Sum;

@@ -4,7 +4,7 @@ extern crate piston_window;
 use std::sync::{Arc, Mutex};
 use std::sync::atomic::{Ordering::Relaxed};
 use std::thread;
-use crate::engine::export::Scene;
+use crate::engine::Scene;
 
 use piston_window::*;
 

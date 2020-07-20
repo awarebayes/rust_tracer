@@ -1,3 +1,4 @@
 pub mod color;
-pub mod export;
 pub mod vector;
+pub use crate::data::color::Color;
+pub use crate::data::vector::Vector;
