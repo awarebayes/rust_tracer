@@ -1,4 +1,4 @@
-use crate::data::{Color, Vector};
+use crate::data::{Color, vrandom_in_unit_sphere, vunit, reflect};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
 use std::sync::{Arc, Mutex};
@@ -25,12 +25,12 @@ impl Material for Metal {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
-        let reflected = Vector::reflect(&Vector::unit_vector(&r_in.direction()), &record.normal);
+        let reflected = reflect(&vunit(&r_in.direction()), &record.normal);
         *scattered = Ray::new(
             record.p,
-            reflected + self.fuzz * Vector::random_in_unit_sphere(),
+            reflected + self.fuzz * vrandom_in_unit_sphere(),
         );
         *attenuation = self.albedo;
-        return Vector::dot(&scattered.direction(), &record.normal) > 0.0;
+        return scattered.direction().dot(&record.normal) > 0.0;
     }
 }

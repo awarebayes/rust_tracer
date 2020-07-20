@@ -1,4 +1,4 @@
-use crate::data::{Color, Vector};
+use crate::data::{Color, vunit, vrandom};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
 use std::sync::{Arc, Mutex};
@@ -25,7 +25,7 @@ impl Material for Lambertian {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
-        let scatter_direction = record.normal + Vector::unit_vector(&Vector::random());
+        let scatter_direction = record.normal + vunit(&vrandom());
         *scattered = *&mut Ray::new(record.p, scatter_direction);
         *attenuation = self.albedo;
         return true;

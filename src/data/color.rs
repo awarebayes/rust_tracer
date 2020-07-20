@@ -1,8 +1,9 @@
-use crate::data::Vector;
+use nalgebra::Vector3;
 use image::Rgba;
 use std::cmp::min;
 use std::iter::Sum;
 use std::ops;
+use crate::data::vrandom;
 
 const RGB_MULT: f64 = 255.99;
 const RGB_MAX: u64 = 255;
@@ -19,8 +20,8 @@ impl Color {
         Color { r, g, b }
     }
 
-    pub fn from_vector(v: &Vector) -> Color {
-        Color::new(v.x(), v.y(), v.z())
+    pub fn from_vector(v: &Vector3<f64>) -> Color {
+        Color::new(v[0], v[1], v[2])
     }
 
     pub fn from_rgb(r: u32, g: u32, b: u32) -> Color {
@@ -113,7 +114,7 @@ impl Color {
     }
 
     pub fn random() -> Color {
-        Color::from_vector(&Vector::random())
+        Color::from_vector(&vrandom())
     }
 }
 

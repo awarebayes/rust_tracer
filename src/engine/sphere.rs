@@ -1,17 +1,18 @@
-use crate::data::Vector;
+use nalgebra::Vector3;
+
 use crate::engine::{HitRecord, Ray};
 use crate::engine::hittable::Hittable;
 use crate::materials::Material;
 use std::sync::{Arc, Mutex};
 
 pub struct Sphere {
-    center: Vector,
+    center: Vector3<f64>,
     radius: f64,
     mat_ptr: Arc<Mutex<dyn Material>>,
 }
 
 impl Sphere {
-    pub fn new(center: Vector, radius: f64, mat_ptr: Arc<Mutex<dyn Material>>) -> Sphere {
+    pub fn new(center: Vector3<f64>, radius: f64, mat_ptr: Arc<Mutex<dyn Material>>) -> Sphere {
         Sphere {
             center,
             radius,
@@ -27,9 +28,10 @@ impl Sphere {
 impl Hittable for Sphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool {
         let oc = r.origin() - self.center;
-        let a = r.direction().len_squared();
-        let b_2 = Vector::dot(&oc, &r.direction());
-        let c = oc.len_squared() - self.radius.powi(2);
+        let a = r.direction();
+        let a = a.dot(&a);
+        let b_2 = oc.dot(&r.direction());
+        let c = oc.dot(&oc) - self.radius.powi(2);
         let discriminant = b_2 * b_2 - a * c;
 
         if discriminant > 0.0 {

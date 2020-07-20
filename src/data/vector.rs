@@ -3,6 +3,7 @@ use rand::{thread_rng, Rng};
 use std::f64::consts::PI;
 use std::ops;
 
+/*
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vector {
     x: f64,
@@ -102,218 +103,65 @@ impl Vector {
         return r_out_parallel + r_out_perp;
     }
 }
+*/
 
-pub fn rand_float(from: f64, to: f64) -> f64 {
-    thread_rng().sample(Uniform::from(from..to))
+use nalgebra::{Vector3, Unit};
+use crate::data::{rand_float01, rand_float};
+
+
+
+pub fn vrandom() -> Vector3<f64> {
+    Vector3::new(rand_float01(), rand_float01(), rand_float01())
 }
 
-pub fn rand_float01() -> f64 {
-    thread_rng().sample(Open01)
+pub fn vrandom_range(min: f64, max: f64) -> Vector3<f64> {
+    Vector3::new(
+        rand_float(min, max),
+        rand_float(min, max),
+        rand_float(min, max),
+    )
+}
+pub fn vrandom_in_unit_sphere() -> Vector3<f64> {
+    let a: f64 = rand_float(0.0, 2.0 * PI);
+    let z: f64 = rand_float(-1.0, 1.0);
+    let r: f64 = (1.0 - z * z).sqrt();
+    return Vector3::new(r * a.cos(), r * a.sin(), z);
 }
 
-fn add_vectors(lhs: &Vector, rhs: &Vector) -> Vector {
-    Vector {
-        x: lhs.x + rhs.x,
-        y: lhs.y + rhs.y,
-        z: lhs.z + rhs.z,
+pub fn vrandom_in_hemisphere(normal: &Vector3<f64>) -> Vector3<f64> {
+    let in_unit_sphere = vrandom_in_unit_sphere();
+    if in_unit_sphere.dot(normal) > 0.0 {
+        return in_unit_sphere;
+    } else {
+        return -1.0 * in_unit_sphere;
     }
 }
 
-fn subtract_vectors(lhs: &Vector, rhs: &Vector) -> Vector {
-    Vector {
-        x: lhs.x - rhs.x,
-        y: lhs.y - rhs.y,
-        z: lhs.z - rhs.z,
-    }
-}
-fn neg_vector(vector: &Vector) -> Vector {
-    Vector {
-        x: -vector.x,
-        y: -vector.y,
-        z: -vector.z,
+pub fn vrandom_in_unit_disk() -> Vector3<f64> {
+    loop {
+        let p = Vector3::new(rand_float(-1.0, 1.0), rand_float(-1.0, 1.0), 0.0);
+        if p.dot(&p) > 1.0 {
+            continue;
+        }
+        return p;
     }
 }
 
-fn add_vector_and_scalar(lhs: &Vector, rhs: f64) -> Vector {
-    Vector {
-        x: lhs.x + rhs,
-        y: lhs.y + rhs,
-        z: lhs.z + rhs,
-    }
+pub fn vunit(v: &Vector3<f64>) -> Vector3<f64>{
+    Unit::new_normalize(*v).into_inner()
 }
 
-fn mul_vector_and_scalar(lhs: &Vector, rhs: f64) -> Vector {
-    Vector {
-        x: lhs.x * rhs,
-        y: lhs.y * rhs,
-        z: lhs.z * rhs,
-    }
+pub fn vlen(v: &Vector3<f64>) -> f64 {
+    v.dot(v).sqrt()
 }
 
-fn div_vector_and_scalar(lhs: &Vector, rhs: f64) -> Vector {
-    Vector {
-        x: lhs.x / rhs,
-        y: lhs.y / rhs,
-        z: lhs.z / rhs,
-    }
+pub fn reflect(v: &Vector3<f64>, n: &Vector3<f64>) -> Vector3<f64> {
+    v - 2.0 * (v.dot(&n)) * n
 }
 
-impl ops::Add<&Vector> for &Vector {
-    type Output = Vector;
-
-    fn add(self, rhs: &Vector) -> Vector {
-        add_vectors(self, rhs)
-    }
-}
-
-impl ops::Add<Vector> for &Vector {
-    type Output = Vector;
-
-    fn add(self, rhs: Vector) -> Vector {
-        add_vectors(self, &rhs)
-    }
-}
-
-impl ops::Add<&Vector> for Vector {
-    type Output = Vector;
-
-    fn add(self, rhs: &Vector) -> Vector {
-        add_vectors(&self, rhs)
-    }
-}
-
-impl ops::Add<Vector> for Vector {
-    type Output = Vector;
-
-    fn add(self, rhs: Vector) -> Vector {
-        add_vectors(&self, &rhs)
-    }
-}
-
-impl ops::Sub<&Vector> for &Vector {
-    type Output = Vector;
-
-    fn sub(self, rhs: &Vector) -> Vector {
-        subtract_vectors(self, rhs)
-    }
-}
-
-impl ops::Sub<Vector> for &Vector {
-    type Output = Vector;
-
-    fn sub(self, rhs: Vector) -> Vector {
-        subtract_vectors(self, &rhs)
-    }
-}
-
-impl ops::Sub<&Vector> for Vector {
-    type Output = Vector;
-
-    fn sub(self, rhs: &Vector) -> Vector {
-        subtract_vectors(&self, rhs)
-    }
-}
-
-impl ops::Sub<Vector> for Vector {
-    type Output = Vector;
-
-    fn sub(self, rhs: Vector) -> Vector {
-        subtract_vectors(&self, &rhs)
-    }
-}
-
-impl ops::Neg for &Vector {
-    type Output = Vector;
-
-    fn neg(self) -> Self::Output {
-        neg_vector(&self)
-    }
-}
-
-impl ops::Neg for Vector {
-    type Output = Vector;
-
-    fn neg(self) -> Self::Output {
-        neg_vector(&self)
-    }
-}
-
-impl ops::Add<f64> for &Vector {
-    type Output = Vector;
-
-    fn add(self, rhs: f64) -> Vector {
-        add_vector_and_scalar(self, rhs)
-    }
-}
-
-impl ops::Add<&Vector> for f64 {
-    type Output = Vector;
-
-    fn add(self, rhs: &Vector) -> Vector {
-        add_vector_and_scalar(rhs, self)
-    }
-}
-
-impl ops::Add<f64> for Vector {
-    type Output = Vector;
-
-    fn add(self, rhs: f64) -> Vector {
-        add_vector_and_scalar(&self, rhs)
-    }
-}
-
-impl ops::Add<Vector> for f64 {
-    type Output = Vector;
-
-    fn add(self, rhs: Vector) -> Vector {
-        add_vector_and_scalar(&rhs, self)
-    }
-}
-
-impl ops::Mul<f64> for &Vector {
-    type Output = Vector;
-
-    fn mul(self, rhs: f64) -> Vector {
-        mul_vector_and_scalar(self, rhs)
-    }
-}
-
-impl ops::Mul<f64> for Vector {
-    type Output = Vector;
-
-    fn mul(self, rhs: f64) -> Vector {
-        mul_vector_and_scalar(&self, rhs)
-    }
-}
-
-impl ops::Mul<&Vector> for f64 {
-    type Output = Vector;
-
-    fn mul(self, rhs: &Vector) -> Vector {
-        mul_vector_and_scalar(rhs, self)
-    }
-}
-
-impl ops::Mul<Vector> for f64 {
-    type Output = Vector;
-
-    fn mul(self, rhs: Vector) -> Vector {
-        mul_vector_and_scalar(&rhs, self)
-    }
-}
-
-impl ops::Div<f64> for Vector {
-    type Output = Vector;
-
-    fn div(self, rhs: f64) -> Vector {
-        div_vector_and_scalar(&self, rhs)
-    }
-}
-
-impl ops::Div<f64> for &Vector {
-    type Output = Vector;
-
-    fn div(self, rhs: f64) -> Vector {
-        div_vector_and_scalar(&self, rhs)
-    }
+pub fn refract(uv: &Vector3<f64>, n: &Vector3<f64>, etai_over_etat: f64) -> Vector3<f64> {
+    let cos_theta = (-1.0 * uv).dot(&n);
+    let r_out_parallel: Vector3<f64> = etai_over_etat * (uv + cos_theta * n);
+    let r_out_perp: Vector3<f64> = -(1.0 - r_out_parallel.dot(&r_out_parallel)).sqrt() * n;
+    return r_out_parallel + r_out_perp;
 }

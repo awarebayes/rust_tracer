@@ -1,22 +1,25 @@
-use crate::data::Vector;
+// use crate::data::Vector;
 use crate::engine::Ray;
+use nalgebra::{Vector3, Unit};
+use crate::data::{vrandom_in_unit_disk, vunit};
 
 pub struct Camera {
-    origin: Vector,
-    lower_left_corner: Vector,
-    horizontal: Vector,
-    vertical: Vector,
+    origin: Vector3<f64>,
+    lower_left_corner: Vector3<f64>,
+    horizontal: Vector3<f64>,
+    vertical: Vector3<f64>,
     lens_radius: f64,
-    u: Vector,
+    u: Vector3<f64>,
+    v: Vector3<f64>,
     // v: Vector,
     // w: Vector,
 }
 
 impl Camera {
     pub fn new(
-        look_from: Vector,
-        look_at: Vector,
-        vup: Vector,
+        look_from: Vector3<f64>,
+        look_at: Vector3<f64>,
+        vup: Vector3<f64>,
         vfov: f64,
         aspect_ratio: f64,
         aperture: f64,
@@ -27,9 +30,9 @@ impl Camera {
         let viewpoint_height = 2.0 * h;
         let viewpoint_width = aspect_ratio * viewpoint_height;
 
-        let w = Vector::unit_vector(&(look_from - look_at));
-        let u = Vector::unit_vector(&Vector::cross(&vup, &w));
-        let v = Vector::cross(&w, &u);
+        let w = vunit(&(look_from - look_at));
+        let u = vunit(&vup.cross(&w));
+        let v = w.cross(&u);
 
         let origin = look_from;
         let horizontal = focus_dist * viewpoint_width * u;
@@ -43,20 +46,18 @@ impl Camera {
             vertical,
             lens_radius,
             u,
-            // v,
+            v,
             // w,
         }
     }
 
-    pub fn get_ray(&self, u: f64, v: f64) -> Ray {
-        let rd = self.lens_radius * Vector::random_in_unit_disk();
-        let offset = self.u * rd.x() + v * rd.y();
+    pub fn get_ray(&self, s: f64, t: f64) -> Ray {
+        let rd: Vector3<f64> = self.lens_radius * vrandom_in_unit_disk();
+        let offset = self.u * rd[0] + self.v * rd[1];
 
         Ray::new(
             self.origin + offset,
-            self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin - offset,
+            self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin - offset,
         )
     }
 }
-
-// unsafe impl Sync for Camera {}

@@ -1,4 +1,5 @@
-use crate::data::{Color, Vector};
+use nalgebra::Vector3;
+use crate::data::{Color, vunit, reflect, refract};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
 use rand::distributions::Open01;
@@ -33,8 +34,8 @@ impl Material for Dielectric {
             false => self.ref_idx,
         };
 
-        let unit_direction = Vector::unit_vector(&r_in.direction());
-        let mut cos_theta = Vector::dot(&(-1.0 * unit_direction), &record.normal);
+        let unit_direction = vunit(&r_in.direction());
+        let mut cos_theta = (-1.0 * unit_direction).dot(&record.normal);
         if cos_theta > 1.0 {
             cos_theta = 1.0
         }
@@ -43,11 +44,11 @@ impl Material for Dielectric {
         let rand_sample: f64 = thread_rng().sample(Open01);
 
         if etai_over_etat * sin_theta > 1.0 || (rand_sample < reflect_prob) {
-            let reflected = Vector::reflect(&unit_direction, &record.normal);
+            let reflected = reflect(&unit_direction, &record.normal);
             *scattered = Ray::new(record.p, reflected);
             return true;
         }
-        let refracted = Vector::refract(&unit_direction, &record.normal, etai_over_etat);
+        let refracted = refract(&unit_direction, &record.normal, etai_over_etat);
         *scattered = Ray::new(record.p, refracted);
         return true;
     }
