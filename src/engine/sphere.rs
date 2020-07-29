@@ -1,7 +1,8 @@
 use nalgebra::Vector3;
 
-use crate::engine::{HitRecord, Ray};
+use crate::engine::bound_box::AABB;
 pub use crate::engine::hittable::Hittable;
+use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
 use std::sync::Arc;
 
@@ -57,7 +58,13 @@ impl Hittable for Sphere {
     fn share(self) -> Arc<dyn Hittable> {
         Arc::new(self)
     }
-    
+
+    fn bounding_box(&self, _t0: f64, _t1: f64) -> Option<AABB> {
+        Option::from(AABB::new(
+            self.center - Vector3::new(self.radius, self.radius, self.radius),
+            self.center + Vector3::new(self.radius, self.radius, self.radius),
+        ))
+    }
 }
 
 unsafe impl Send for Sphere {}

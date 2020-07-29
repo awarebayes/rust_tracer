@@ -1,7 +1,4 @@
-use rand::distributions::{Open01, Uniform};
-use rand::{thread_rng, Rng};
 use std::f64::consts::PI;
-use std::ops;
 
 /*
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -128,6 +125,7 @@ pub fn vrandom_in_unit_sphere() -> Vector3<f64> {
     return Vector3::new(r * a.cos(), r * a.sin(), z);
 }
 
+/*
 pub fn vrandom_in_hemisphere(normal: &Vector3<f64>) -> Vector3<f64> {
     let in_unit_sphere = vrandom_in_unit_sphere();
     if in_unit_sphere.dot(normal) > 0.0 {
@@ -136,6 +134,7 @@ pub fn vrandom_in_hemisphere(normal: &Vector3<f64>) -> Vector3<f64> {
         return -1.0 * in_unit_sphere;
     }
 }
+*/
 
 pub fn vrandom_in_unit_disk() -> Vector3<f64> {
     loop {

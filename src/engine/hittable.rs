@@ -1,5 +1,6 @@
 use crate::data::Color;
 use crate::engine::Ray;
+use crate::engine::bound_box::AABB;
 use crate::materials::{Lambertian, Material};
 use std::sync::Arc;
 use nalgebra::Vector3;
@@ -35,5 +36,6 @@ impl HitRecord {
 pub trait Hittable: Send + Sync {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool;
     fn share(self) -> Arc<dyn Hittable>;
+    fn bounding_box(&self, t0: f64, t1: f64) -> Option<AABB>;
 }
 

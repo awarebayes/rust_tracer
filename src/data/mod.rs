@@ -8,7 +8,7 @@ pub use crate::data::utils::{
 };
 
 pub use crate::data::vector::{
-    vrandom, vrandom_in_hemisphere, vrandom_in_unit_disk,
+    vrandom, vrandom_in_unit_disk,
     vrandom_in_unit_sphere, vrandom_range, vunit, vlen,
     reflect, refract
 };

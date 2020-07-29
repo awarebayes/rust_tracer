@@ -4,6 +4,7 @@ pub mod sphere;
 pub mod hittable;
 pub mod ray;
 pub mod scene;
+pub mod bound_box;
 pub use crate::engine::camera::Camera;
 pub use crate::engine::hittable::{HitRecord, Hittable};
 pub use crate::engine::hittable_list::HittableList;
