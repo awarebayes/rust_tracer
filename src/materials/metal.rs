@@ -1,7 +1,7 @@
 use crate::data::{Color, vrandom_in_unit_sphere, vunit, reflect};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 pub struct Metal {
     albedo: Color,
@@ -12,8 +12,8 @@ impl Metal {
     pub fn new(albedo: Color, fuzz: f64) -> Metal {
         Metal { albedo, fuzz }
     }
-    pub fn share(self) -> Arc<Mutex<dyn Material>> {
-        Arc::new(Mutex::new(self))
+    pub fn share(self) -> Arc<dyn Material> {
+        Arc::new(self)
     }
 }
 

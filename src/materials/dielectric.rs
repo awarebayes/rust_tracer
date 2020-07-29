@@ -1,10 +1,9 @@
-use nalgebra::Vector3;
 use crate::data::{Color, vunit, reflect, refract};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
 use rand::distributions::Open01;
 use rand::{thread_rng, Rng};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 
 pub struct Dielectric {
@@ -15,8 +14,8 @@ impl Dielectric {
     pub fn new(ref_idx: f64) -> Dielectric {
         Dielectric { ref_idx }
     }
-    pub fn share(self) -> Arc<Mutex<dyn Material>> {
-        Arc::new(Mutex::new(self))
+    pub fn share(self) -> Arc<dyn Material> {
+        Arc::new(self)
     }
 }
 

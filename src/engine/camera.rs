@@ -1,6 +1,5 @@
-// use crate::data::Vector;
 use crate::engine::Ray;
-use nalgebra::{Vector3, Unit};
+use nalgebra::Vector3;
 use crate::data::{vrandom_in_unit_disk, vunit};
 
 pub struct Camera {

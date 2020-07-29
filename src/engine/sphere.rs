@@ -1,27 +1,23 @@
 use nalgebra::Vector3;
 
 use crate::engine::{HitRecord, Ray};
-use crate::engine::hittable::Hittable;
+pub use crate::engine::hittable::Hittable;
 use crate::materials::Material;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 pub struct Sphere {
     center: Vector3<f64>,
     radius: f64,
-    mat_ptr: Arc<Mutex<dyn Material>>,
+    mat_ptr: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Vector3<f64>, radius: f64, mat_ptr: Arc<Mutex<dyn Material>>) -> Sphere {
+    pub fn new(center: Vector3<f64>, radius: f64, mat_ptr: Arc<dyn Material>) -> Sphere {
         Sphere {
             center,
             radius,
             mat_ptr,
         }
-    }
-
-    pub fn share(self) -> Arc<Mutex<Sphere>> {
-        Arc::new(Mutex::new(self))
     }
 }
 
@@ -42,7 +38,7 @@ impl Hittable for Sphere {
                 record.p = r.at(record.t);
                 let outward_normal = (record.p - self.center) / self.radius;
                 record.set_face_normal(r, &outward_normal);
-                record.mat_ptr = Arc::clone(&self.mat_ptr);
+                record.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
             let temp = (-b_2 + root) / a;
@@ -51,11 +47,15 @@ impl Hittable for Sphere {
                 record.p = r.at(record.t);
                 let outward_normal = (record.p - self.center) / self.radius;
                 record.set_face_normal(r, &outward_normal);
-                record.mat_ptr = Arc::clone(&self.mat_ptr);
+                record.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
         }
         return false;
+    }
+
+    fn share(self) -> Arc<dyn Hittable> {
+        Arc::new(self)
     }
     
 }

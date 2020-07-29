@@ -1,7 +1,7 @@
 use crate::data::{Color, vunit, vrandom};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 
 pub struct Lambertian {
@@ -12,8 +12,8 @@ impl Lambertian {
     pub fn new(albedo: Color) -> Lambertian {
         Lambertian { albedo }
     }
-    pub fn share(self) -> Arc<Mutex<dyn Material>> {
-        Arc::new(Mutex::new(self))
+    pub fn share(self) -> Arc<dyn Material> {
+        Arc::new(self)
     }
 }
 

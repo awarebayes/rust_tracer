@@ -6,10 +6,19 @@
         {
             "label": "profile",
             "type": "shell",
-            "command": "cd /home/mikew/Documents/Programming/Rust/raytracer/target/debug && perf record -g ./raytracer && perf script | stackcollapse-perf.pl | rust-unmangle | flamegraph.pl > flame.svg && brave flame.svg",
+            "command": "cd /home/mikew/Documents/Programming/rust/raytracer/target/debug && perf record -g ./raytracer && perf script | stackcollapse-perf.pl | rust-unmangle | flamegraph.pl > flame.svg && brave flame.svg",
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "run release",
+            "type": "shell",
+            "command": "CARGO_INCREMENTAL=1 cargo build --release && cd /home/mikew/Documents/Programming/rust/rust_tracer/target/release && ./raytracer",
             "problemMatcher": [
                 "$rustc"
             ]
         }
-    ]
+    ],
+
 }

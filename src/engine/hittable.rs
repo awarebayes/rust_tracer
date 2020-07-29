@@ -1,7 +1,7 @@
 use crate::data::Color;
 use crate::engine::Ray;
 use crate::materials::{Lambertian, Material};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use nalgebra::Vector3;
 
 #[derive(Clone)]
@@ -10,7 +10,7 @@ pub struct HitRecord {
     pub(crate) normal: Vector3<f64>,
     pub(crate) t: f64,
     pub(crate) front_face: bool,
-    pub(crate) mat_ptr: Arc<Mutex<dyn Material>>,
+    pub(crate) mat_ptr: Arc<dyn Material>,
 }
 
 impl HitRecord {
@@ -27,12 +27,13 @@ impl HitRecord {
             normal: Vector3::new(0.0, 0.0, 0.0),
             t: 0.0,
             front_face: false,
-            mat_ptr: Arc::new(Mutex::new(Lambertian::new(Color::new(0.0, 0.0, 0.0)))),
+            mat_ptr: Arc::new(Lambertian::new(Color::new(0.0, 0.0, 0.0))),
         }
     }
 }
 
 pub trait Hittable: Send + Sync {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool;
+    fn share(self) -> Arc<dyn Hittable>;
 }
 

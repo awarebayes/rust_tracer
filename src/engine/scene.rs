@@ -6,7 +6,7 @@ use nalgebra::Vector3;
 // crate imports
 use crate::data::Color;
 use crate::data::{rand_float, rand_float01, vunit, vlen, vrandom_range};
-use crate::engine::{Camera, HitRecord, HittableList, Ray, Sphere};
+use crate::engine::{Camera, HitRecord, HittableList, Ray, Sphere, Hittable};
 use crate::gui::render_window;
 use crate::materials::{Dielectric, Lambertian, Metal};
 
@@ -31,6 +31,7 @@ pub struct Scene {
     pub max_depth: i32,
     pub image_width: f64,
     pub image_height: f64,
+    pub prerender_finished: Arc<AtomicBool>,
     pub completed: Arc<AtomicBool>,
 }
 
@@ -45,8 +46,6 @@ fn ray_color(r: &Ray, world: Arc<HittableList>, depth: i32) -> Color {
         let mut attenuation = Color::new(0.0, 0.0, 0.0);
         if record
             .mat_ptr
-            .lock()
-            .unwrap()
             .scatter(r, &record, &mut attenuation, &mut scattered)
         {
             return attenuation * ray_color(&scattered, world, depth - 1);
@@ -64,6 +63,7 @@ pub fn random_world() -> HittableList {
     let mut world = HittableList::new();
     let ground_matrial = Lambertian::new(Color::new(0.5, 0.5, 0.5)).share();
     world.add(Sphere::new(Vector3::new(0.0, -1000.0, 0.0), 1000.0, ground_matrial).share());
+
 
     for a in -11..11 {
         for b in -11..11 {
@@ -239,7 +239,7 @@ fn split_even(from: u64, to: u64, n: u64) -> Vec<(u64, u64)> {
     return result;
 }
 
-pub fn render(scene: Arc<Scene>, n_workers: u64, path: String) {
+pub fn render(scene: Scene, n_workers: u64, path: String) {
     let imgbuf: Arc<Mutex<image::ImageBuffer<image::Rgba<u8>, Vec<u8>>>> = Arc::new(Mutex::new(
         image::ImageBuffer::new(scene.image_width as u32, scene.image_height as u32),
     ));
@@ -259,6 +259,8 @@ pub fn render(scene: Arc<Scene>, n_workers: u64, path: String) {
     let (tx, rx) = mpsc::channel();
     let shared_tx = Arc::new(Mutex::new(tx));
     let split = split_even(0, scene.image_width as u64 - 1, n_workers);
+
+    let scene = Arc::new(scene); // Make scene shared across threads. (Immutable)
 
     let render_handle = render_window(imgbuf.clone(), scene.clone());
 
