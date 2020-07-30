@@ -31,30 +31,27 @@ pub struct Scene {
     pub image_height: f64,
     pub prerender_finished: Arc<AtomicBool>,
     pub completed: Arc<AtomicBool>,
+    pub background: Color,
 }
 
-fn ray_color(r: &Ray, world: Arc<HittableList>, depth: i32) -> Color {
+fn ray_color(r: &Ray, background: Color, world: Arc<HittableList>, depth: i32) -> Color {
     let mut record = HitRecord::new();
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
-
-    if world.hit(r, 0.001, INFINITY, &mut record) {
-        let mut scattered = Ray::new(Vector3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, 0.0));
-        let mut attenuation = Color::new(0.0, 0.0, 0.0);
-        if record
-            .mat_ptr
-            .scatter(r, &record, &mut attenuation, &mut scattered)
-        {
-            return attenuation * ray_color(&scattered, world, depth - 1);
-        }
-        return Color::new(0.0, 0.0, 0.0);
-        // let target = record.p + record.normal + Vector::random_in_hemisphere(&record.normal);
-        // return 0.5 * ray_color(&Ray::new(record.p, target-record.p), world, depth-1)
+    if !world.hit(r, 0.001, INFINITY, &mut record) {
+        return background;
     }
-    let unit_direction = vunit(&r.direction());
-    let t = 0.5 * (unit_direction[1] + 1.0);
-    return (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0);
+    let mut scattered = Ray::new(Vector3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, 0.0));
+    let mut attenuation = Color::new(0.0, 0.0, 0.0);
+    let emmited = record.mat_ptr.emit(record.u, record.v, &record.p);
+    if !record
+        .mat_ptr
+        .scatter(r, &record, &mut attenuation, &mut scattered)
+    {
+        return emmited;
+    }
+    return emmited + attenuation * ray_color(&scattered, background, world, depth - 1);
 }
 
 fn pixel_processor(x: f64, y: f64, scene: Arc<Scene>) -> image::Rgba<u8> {
@@ -64,7 +61,7 @@ fn pixel_processor(x: f64, y: f64, scene: Arc<Scene>) -> image::Rgba<u8> {
         let v = (y + rand_float01()) / (scene.image_height - 1.0);
         let v = 1.0 - v;
         let r = scene.cam.get_ray(u, v);
-        let rc = ray_color(&r, scene.world.clone(), scene.max_depth);
+        let rc = ray_color(&r, scene.background, scene.world.clone(), scene.max_depth);
         pixel_color = pixel_color + rc;
     }
     pixel_color

@@ -3,9 +3,9 @@ use nalgebra::Vector3;
 // crate imports
 use crate::data::Color;
 use crate::data::{rand_float, rand_float01, vlen, vrandom_range};
-use crate::engine::{Hittable, HittableList, Sphere};
-use crate::materials::{Dielectric, Lambertian, Metal};
-use crate::textures::{CheckerTexture, Texture, NoiseTexture, ImageTexture};
+use crate::engine::{Hittable, HittableList, Sphere, XYRect};
+use crate::materials::{Dielectric, DiffuseLight, Lambertian, Metal};
+use crate::textures::{CheckerTexture, ImageTexture, NoiseTexture, Texture};
 
 pub fn random_world() -> HittableList {
     let mut world = HittableList::new();
@@ -62,12 +62,11 @@ pub fn two_spheres_checker() -> HittableList {
     return objects;
 }
 
-
 pub fn two_perlin_spheres() -> HittableList {
     let mut objects = HittableList::new();
 
     let pertext = NoiseTexture::new(2.0).share();
-    let lamb =  Lambertian::from_texture(pertext.clone()).share();
+    let lamb = Lambertian::from_texture(pertext.clone()).share();
     objects.add(Sphere::new(Vector3::new(0.0, -1000.0, 0.0), 1000.0, lamb.clone()).share());
     objects.add(Sphere::new(Vector3::new(0.0, 2.0, 0.0), 2.0, lamb.clone()).share());
 
@@ -75,10 +74,26 @@ pub fn two_perlin_spheres() -> HittableList {
 }
 
 pub fn earth() -> HittableList {
-    let earth_texture = ImageTexture::new("/home/mikew/Documents/Programming/rust/rust_tracer/res/earthmap.jpg".to_string()).share();
+    let earth_texture = ImageTexture::new(
+        "/home/mikew/Documents/Programming/rust/rust_tracer/res/earthmap.jpg".to_string(),
+    )
+    .share();
     let earth_surface = Lambertian::from_texture(earth_texture).share();
     let globe = Sphere::new(Vector3::new(0.0, 0.0, 0.0), 2.0, earth_surface).share();
     let mut world = HittableList::new();
     world.add(globe.clone());
-    return world; 
+    return world;
+}
+
+pub fn simple_light() -> HittableList {
+    let mut objects = HittableList::new();
+
+    let pertext = NoiseTexture::new(2.0).share();
+    let lamb = Lambertian::from_texture(pertext.clone()).share();
+    let diff_light = DiffuseLight::from_color(Color::new(0.5, 1.0, 100.0)).share();
+    objects.add(Sphere::new(Vector3::new(0.0, -1000.0, 0.0), 1000.0, lamb.clone()).share());
+    objects.add(Sphere::new(Vector3::new(0.0, 2.0, 0.0), 2.0, diff_light.clone()).share());
+
+    objects.add(XYRect::new(3.0, 5.0, 1.0, 3.0, -2.0, diff_light.clone()).share());
+    return objects;
 }
