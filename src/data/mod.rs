@@ -1,6 +1,8 @@
 pub mod color;
 pub mod utils;
 pub mod vector;
+pub mod scenes;
+
 pub use crate::data::color::Color;
 // pub use crate::data::vector::Vector;
 pub use crate::data::utils::{

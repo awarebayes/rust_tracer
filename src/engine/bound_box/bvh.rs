@@ -21,8 +21,8 @@ impl BvhNode {
             _ => panic!("Value not in 0..2"),
         };
 
-        let mut left: Arc<dyn Hittable>;
-        let mut right: Arc<dyn Hittable>;
+        let left: Arc<dyn Hittable>;
+        let right: Arc<dyn Hittable>;
 
         match objects.len() {
             1 => {

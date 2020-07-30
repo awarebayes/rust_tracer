@@ -4,6 +4,7 @@ use crate::engine::bound_box::AABB;
 pub use crate::engine::hittable::Hittable;
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
+use std::f64::consts::PI;
 use std::sync::Arc;
 
 pub struct Sphere {
@@ -19,6 +20,12 @@ impl Sphere {
             radius,
             mat_ptr,
         }
+    }
+    pub fn get_uv(p: &Vector3<f64>, u: &mut f64, v: &mut f64) {
+        let phi = p[2].atan2(p[0]);
+        let theta = p[1].asin();
+        *u = 1.0 - (phi + PI) / (2.0 * PI);
+        *v = (theta + PI / 2.0) / PI;
     }
 }
 
@@ -39,6 +46,7 @@ impl Hittable for Sphere {
                 record.p = r.at(record.t);
                 let outward_normal = (record.p - self.center) / self.radius;
                 record.set_face_normal(r, &outward_normal);
+                Sphere::get_uv(&outward_normal, &mut record.u, &mut record.v);
                 record.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
@@ -48,6 +56,7 @@ impl Hittable for Sphere {
                 record.p = r.at(record.t);
                 let outward_normal = (record.p - self.center) / self.radius;
                 record.set_face_normal(r, &outward_normal);
+                Sphere::get_uv(&outward_normal, &mut record.u, &mut record.v);
                 record.mat_ptr = self.mat_ptr.clone();
                 return true;
             }
@@ -69,3 +78,5 @@ impl Hittable for Sphere {
 
 unsafe impl Send for Sphere {}
 unsafe impl Sync for Sphere {}
+
+
