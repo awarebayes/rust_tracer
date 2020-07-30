@@ -1,9 +1,9 @@
 use crate::data::Color;
-use crate::engine::Ray;
 use crate::engine::bound_box::AABB;
+use crate::engine::Ray;
 use crate::materials::{Lambertian, Material};
-use std::sync::Arc;
 use nalgebra::Vector3;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct HitRecord {
@@ -42,4 +42,3 @@ pub trait Hittable: Send + Sync {
     fn share(self) -> Arc<dyn Hittable>;
     fn get_bounding_box(&self) -> Option<AABB>;
 }
-

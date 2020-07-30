@@ -5,8 +5,8 @@ use nalgebra::Vector3;
 
 // crate imports
 use crate::data::Color;
-use crate::data::{ rand_float01, vunit };
-use crate::engine::{Camera, HitRecord, HittableList, Ray, Hittable};
+use crate::data::{rand_float01, vunit};
+use crate::engine::{Camera, HitRecord, Hittable, HittableList, Ray};
 use crate::gui::render_window;
 
 // std imports
@@ -56,7 +56,6 @@ fn ray_color(r: &Ray, world: Arc<HittableList>, depth: i32) -> Color {
     let t = 0.5 * (unit_direction[1] + 1.0);
     return (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0);
 }
-
 
 fn pixel_processor(x: f64, y: f64, scene: Arc<Scene>) -> image::Rgba<u8> {
     let mut pixel_color = Color::new(0.0, 0.0, 0.0);

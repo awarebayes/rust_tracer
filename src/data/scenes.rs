@@ -5,7 +5,7 @@ use crate::data::Color;
 use crate::data::{rand_float, rand_float01, vlen, vrandom_range};
 use crate::engine::{Hittable, HittableList, Sphere};
 use crate::materials::{Dielectric, Lambertian, Metal};
-use crate::textures::{CheckerTexture, Texture, NoiseTexture};
+use crate::textures::{CheckerTexture, Texture, NoiseTexture, ImageTexture};
 
 pub fn random_world() -> HittableList {
     let mut world = HittableList::new();
@@ -72,4 +72,13 @@ pub fn two_perlin_spheres() -> HittableList {
     objects.add(Sphere::new(Vector3::new(0.0, 2.0, 0.0), 2.0, lamb.clone()).share());
 
     return objects;
+}
+
+pub fn earth() -> HittableList {
+    let earth_texture = ImageTexture::new("/home/mikew/Documents/Programming/rust/rust_tracer/res/earthmap.jpg".to_string()).share();
+    let earth_surface = Lambertian::from_texture(earth_texture).share();
+    let globe = Sphere::new(Vector3::new(0.0, 0.0, 0.0), 2.0, earth_surface).share();
+    let mut world = HittableList::new();
+    world.add(globe.clone());
+    return world; 
 }

@@ -10,8 +10,6 @@ pub struct Camera {
     lens_radius: f64,
     u: Vector3<f64>,
     v: Vector3<f64>,
-    // v: Vector,
-    // w: Vector,
 }
 
 impl Camera {
@@ -52,7 +50,11 @@ impl Camera {
 
     pub fn get_ray(&self, s: f64, t: f64) -> Ray {
         let rd: Vector3<f64> = self.lens_radius * vrandom_in_unit_disk();
-        let offset = self.u * rd[0] + self.v * rd[1];
+        let mut offset = self.u * rd[0] + self.v * rd[1];
+
+        if self.lens_radius == 0.0 {
+            offset = Vector3::new(0.0, 0.0, 0.0);
+        }
 
         Ray::new(
             self.origin + offset,

@@ -31,7 +31,7 @@ fn main() {
     let cam = Camera::new(look_from, look_at, vup, 40.0, aspect_ratio, 0.0, focus_dist);
     let cam = Arc::new(cam);
 
-    let world = scenes::two_perlin_spheres();
+    let world = scenes::earth();
     let world = Arc::new(world);
 
     let completed = Arc::new(AtomicBool::new(false));

@@ -1,10 +1,9 @@
-use crate::data::{Color, vunit, reflect, refract};
+use crate::data::{reflect, refract, vunit, Color};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
 use rand::distributions::Open01;
 use rand::{thread_rng, Rng};
 use std::sync::Arc;
-
 
 pub struct Dielectric {
     ref_idx: f64,

@@ -1,9 +1,8 @@
-use crate::data::{Color, vunit, vrandom};
+use crate::data::{vrandom, vunit, Color};
 use crate::engine::{HitRecord, Ray};
 use crate::materials::Material;
-use crate::textures::{Texture, SolidColor};
+use crate::textures::{SolidColor, Texture};
 use std::sync::Arc;
-
 
 pub struct Lambertian {
     albedo: Arc<dyn Texture>,
@@ -11,7 +10,9 @@ pub struct Lambertian {
 
 impl Lambertian {
     pub fn from_color(albedo: Color) -> Lambertian {
-        Lambertian { albedo: SolidColor::new(albedo).share() }
+        Lambertian {
+            albedo: SolidColor::new(albedo).share(),
+        }
     }
 
     pub fn from_texture(texture: Arc<dyn Texture>) -> Lambertian {
