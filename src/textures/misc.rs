@@ -2,7 +2,7 @@ use crate::data::Color;
 use crate::textures::Texture;
 use nalgebra::Vector3;
 use std::sync::Arc;
-use noise::{Perlin, NoiseFn};
+use noise::{Perlin, NoiseFn, Turbulence};
 
 pub struct SolidColor {
     color_value: Color,
@@ -54,19 +54,23 @@ impl Texture for CheckerTexture {
 
 
 pub struct NoiseTexture {
-    noise: Perlin,
+    noise: Turbulence<Perlin>,
+    scale: f64,
 }
 
 impl NoiseTexture{
-    pub fn new() ->  NoiseTexture {
-        NoiseTexture{noise: Perlin::new()}
+    pub fn new(scale: f64) ->  NoiseTexture {
+        NoiseTexture{noise: Turbulence::new(Perlin::new()), scale}
     }
 }
 
 
 impl Texture for NoiseTexture {
     fn value(&self, _u: f64, _v: f64, p: &Vector3<f64>) -> Color {
-        let noise_val = self.noise.get([p[0], p[1], p[2]]).abs();
+        let ps = p * self.scale;
+        let mut noise_val = self.noise.get([ps[0], ps[1], ps[2]]);
+        noise_val = (noise_val + 1.0) / 2.0; // [-1, 1] -> [0, 1]
+        noise_val = 0.5 * (1.0 + (self.scale * p[2] + 5.0 * noise_val + (1.0 - p[1]) * self.scale).sin());
         return Color::new(1.0, 1.0, 1.0) * noise_val;
     }
     fn share(self) -> Arc<dyn Texture> {

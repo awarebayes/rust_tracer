@@ -66,7 +66,7 @@ pub fn two_spheres_checker() -> HittableList {
 pub fn two_perlin_spheres() -> HittableList {
     let mut objects = HittableList::new();
 
-    let pertext = NoiseTexture::new().share();
+    let pertext = NoiseTexture::new(2.0).share();
     let lamb =  Lambertian::from_texture(pertext.clone()).share();
     objects.add(Sphere::new(Vector3::new(0.0, -1000.0, 0.0), 1000.0, lamb.clone()).share());
     objects.add(Sphere::new(Vector3::new(0.0, 2.0, 0.0), 2.0, lamb.clone()).share());

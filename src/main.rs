@@ -18,7 +18,7 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
 fn main() {
-    let image_width = 720.0;
+    let image_width = 1000.0;
     let aspect_ratio = 16.0 / 9.0;
     let image_height = image_width / aspect_ratio;
     let samples_per_pixel = 10;
@@ -28,7 +28,7 @@ fn main() {
     let vup = Vector3::new(0.0, 1.0, 0.0);
     let focus_dist = 10.0;
 
-    let cam = Camera::new(look_from, look_at, vup, 20.0, aspect_ratio, 0.0, focus_dist);
+    let cam = Camera::new(look_from, look_at, vup, 40.0, aspect_ratio, 0.0, focus_dist);
     let cam = Arc::new(cam);
 
     let world = scenes::two_perlin_spheres();
