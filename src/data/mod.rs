@@ -4,7 +4,7 @@ pub mod vector;
 pub use crate::data::color::Color;
 // pub use crate::data::vector::Vector;
 pub use crate::data::utils::{
-    rand_float, rand_float01, 
+    rand_float, rand_float01, rand_int 
 };
 
 pub use crate::data::vector::{

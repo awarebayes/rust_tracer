@@ -53,5 +53,5 @@ fn main() {
     //std::io::stdin();
     scene.prerender_finished.store(true, std::sync::atomic::Ordering::Relaxed);
     
-    render(scene, 4, "test.png".to_string())
+    render(scene, 4, "result.png".to_string())
 }

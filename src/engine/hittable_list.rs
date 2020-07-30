@@ -39,7 +39,7 @@ impl Hittable for HittableList {
     }
 
     // Calculates biggest bounding box for all objects inside
-    fn bounding_box(&self, t0: f64, t1: f64) -> Option<AABB> {
+    fn get_bounding_box(&self) -> Option<AABB> {
         if self.objects.is_empty() {
             return Option::default();
         }
@@ -48,7 +48,7 @@ impl Hittable for HittableList {
         let mut first_box = true;
 
         for obj in self.objects.clone() {
-            match obj.bounding_box(t0, t1) {
+            match obj.get_bounding_box() {
                 Some(temp_box) => {
                     if first_box {
                         output_box = temp_box;

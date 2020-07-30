@@ -36,6 +36,6 @@ impl HitRecord {
 pub trait Hittable: Send + Sync {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool;
     fn share(self) -> Arc<dyn Hittable>;
-    fn bounding_box(&self, t0: f64, t1: f64) -> Option<AABB>;
+    fn get_bounding_box(&self) -> Option<AABB>;
 }
 

@@ -59,7 +59,7 @@ impl Hittable for Sphere {
         Arc::new(self)
     }
 
-    fn bounding_box(&self, _t0: f64, _t1: f64) -> Option<AABB> {
+    fn get_bounding_box(&self) -> Option<AABB> {
         Option::from(AABB::new(
             self.center - Vector3::new(self.radius, self.radius, self.radius),
             self.center + Vector3::new(self.radius, self.radius, self.radius),

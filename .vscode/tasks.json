@@ -14,7 +14,7 @@
         {
             "label": "run release",
             "type": "shell",
-            "command": "CARGO_INCREMENTAL=1 cargo build --release && cd /home/mikew/Documents/Programming/rust/rust_tracer/target/release && ./raytracer",
+            "command": "CARGO_INCREMENTAL=1 cargo build --release && cd /home/mikew/Documents/Programming/rust/rust_tracer/target/release && ./raytracer && gwenview result.png",
             "problemMatcher": [
                 "$rustc"
             ]

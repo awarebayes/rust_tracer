@@ -308,5 +308,6 @@ pub fn render(scene: Scene, n_workers: u64, path: String) {
     imgbuf.lock().unwrap().save(path).unwrap();
 
     scene.completed.store(true, Relaxed);
+    
     render_handle.join().unwrap();
 }
